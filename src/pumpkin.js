@@ -22,11 +22,15 @@ class Pumpkin {
   }
 
   get first() {
-    return this.elements[0]
+    return this.elements.length ? this.elements[0] : null
   }
 
   get last() {
-    return this.elements[this.elements.length - 1]
+    return this.elements.length ? this.elements[this.elements.length - 1] : null
+  }
+
+  index(index) {
+    return this.elements[index] ? this.elements[index] : null
   }
 
   get children() {
@@ -90,6 +94,76 @@ class Pumpkin {
     return this.each(el => {
       el.parentNode.removeChild(el)
       return el
+    })
+  }
+
+  html(string) {
+    return this.each(el => {
+      el.innerHTML = string
+      return el
+    })
+  }
+
+  text(string) {
+    return this.each(el => {
+      if (el.textContent !== undefined) el.textContent = string
+      else el.innerText = string
+      return el
+    })
+  }
+
+  css(obj) {
+    return this.each(el => {
+      for (let rule in obj) {
+        el.style[rule] = obj[rule]
+      }
+      return el
+    })
+  }
+
+  addClass(classList) {
+    return this.each(el => {
+      classList.split(' ').forEach(string => {
+        if (el.classList) el.classList.add(string)
+        else el.className += ' ' + string
+      })
+      return classList
+    })
+  }
+
+  removeClass(classList) {
+    return this.each(el => {
+      classList.split(' ').forEach(string => {
+        if (el.classList) el.classList.remove(string)
+        else
+          el.className = el.className.replace(
+            new RegExp(
+              '(^|\\b)' + string.split(' ').join('|') + '(\\b|$)',
+              'gi'
+            ),
+            ' '
+          )
+      })
+      return classList
+    })
+  }
+
+  toggleClass(classList) {
+    return this.each(el => {
+      classList.split(' ').forEach(string => {
+        if (el.classList) {
+          el.classList.toggle(string)
+        } else {
+          let classes = el.className.split(' ')
+          let existingIndex = classes.indexOf(string)
+
+          if (existingIndex >= 0) classes.splice(existingIndex, 1)
+          else classes.push(string)
+
+          el.className = classes.join(' ')
+        }
+      })
+      return classList
     })
   }
 
